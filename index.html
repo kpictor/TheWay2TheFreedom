@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>52期投资学习系统</title>
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --bg-dark: #0f172a;
+            --bg-card: #1e293b;
+            --bg-hover: #334155;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --success: #22c55e;
+            --warning: #f59e0b;
+            --border: #334155;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            min-height: 100vh;
+        }
+        
+        /* Layout */
+        .app-container {
+            display: flex;
+            min-height: 100vh;
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: var(--bg-card);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+        }
+        
+        .logo {
+            padding: 24px;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .logo h1 {
+            font-size: 18px;
+            font-weight: 600;
+            background: linear-gradient(135deg, var(--primary), #a855f7);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .logo p {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+        
+        /* Navigation */
+        .nav-section {
+            padding: 16px;
+        }
+        
+        .nav-section h3 {
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+        }
+        
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 10px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-bottom: 4px;
+        }
+        
+        .nav-item:hover {
+            background: var(--bg-hover);
+        }
+        
+        .nav-item.active {
+            background: var(--primary);
+        }
+        
+        .nav-item .icon {
+            width: 20px;
+            margin-right: 12px;
+        }
+        
+        .nav-item .label {
+            font-size: 14px;
+        }
+        
+        .nav-item .badge {
+            margin-left: auto;
+            background: var(--success);
+            color: white;
+            font-size: 11px;
+            padding: 2px 8px;
+            border-radius: 10px;
+        }
+        
+        /* Quarter sections */
+        .quarter-nav {
+            margin-top: 8px;
+        }
+        
+        .quarter-header {
+            display: flex;
+            align-items: center;
+            padding: 10px 12px;
+            cursor: pointer;
+            border-radius: 8px;
+        }
+        
+        .quarter-header:hover {
+            background: var(--bg-hover);
+        }
+        
+        .quarter-header .arrow {
+            margin-left: auto;
+            transition: transform 0.2s;
+        }
+        
+        .quarter-header.expanded .arrow {
+            transform: rotate(90deg);
+        }
+        
+        .quarter-episodes {
+            display: none;
+            padding-left: 24px;
+        }
+        
+        .quarter-episodes.show {
+            display: block;
+        }
+        
+        .episode-item {
+            display: flex;
+            align-items: center;
+            padding: 8px 12px;
+            font-size: 13px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            border-radius: 6px;
+        }
+        
+        .episode-item:hover {
+            background: var(--bg-hover);
+            color: var(--text-primary);
+        }
+        
+        .episode-item.completed::before {
+            content: '✓';
+            color: var(--success);
+            margin-right: 8px;
+        }
+        
+        .episode-item.current {
+            background: var(--primary);
+            color: white;
+        }
+        
+        /* Main content */
+        .main-content {
+            margin-left: 280px;
+            flex: 1;
+            padding: 32px;
+        }
+        
+        /* Header */
+        .content-header {
+            margin-bottom: 32px;
+        }
+        
+        .breadcrumb {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+        
+        .content-header h2 {
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        
+        .content-header p {
+            color: var(--text-secondary);
+        }
+        
+        /* Progress bar */
+        .progress-section {
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+        
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+        
+        .progress-bar {
+            height: 8px;
+            background: var(--bg-hover);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), #a855f7);
+            border-radius: 4px;
+            transition: width 0.3s;
+        }
+        
+        /* Content area */
+        .content-area {
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 32px;
+        }
+        
+        .content-area h3 {
+            font-size: 20px;
+            margin-bottom: 16px;
+        }
+        
+        .content-area p {
+            color: var(--text-secondary);
+            line-height: 1.7;
+            margin-bottom: 16px;
+        }
+        
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 24px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 12px;
+        }
+        
+        .tab {
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            color: var(--text-secondary);
+            transition: all 0.2s;
+        }
+        
+        .tab:hover {
+            background: var(--bg-hover);
+        }
+        
+        .tab.active {
+            background: var(--primary);
+            color: white;
+        }
+        
+        /* Markdown content */
+        .markdown-content {
+            line-height: 1.8;
+        }
+        
+        .markdown-content h1, .markdown-content h2, .markdown-content h3 {
+            margin-top: 24px;
+            margin-bottom: 12px;
+        }
+        
+        .markdown-content code {
+            background: var(--bg-hover);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        .markdown-content pre {
+            background: var(--bg-dark);
+            padding: 16px;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 16px 0;
+        }
+        
+        .markdown-content blockquote {
+            border-left: 4px solid var(--primary);
+            padding-left: 16px;
+            color: var(--text-secondary);
+            margin: 16px 0;
+        }
+        
+        /* Action buttons */
+        .action-bar {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+            padding-top: 24px;
+            border-top: 1px solid var(--border);
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s;
+        }
+        
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: var(--primary-dark);
+        }
+        
+        .btn-secondary {
+            background: var(--bg-hover);
+            color: var(--text-primary);
+        }
+        
+        .btn-secondary:hover {
+            background: #475569;
+        }
+        
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+        
+        /* Settings panel */
+        .settings-panel {
+            position: fixed;
+            right: -400px;
+            top: 0;
+            width: 400px;
+            height: 100vh;
+            background: var(--bg-card);
+            border-left: 1px solid var(--border);
+            padding: 24px;
+            transition: right 0.3s;
+            z-index: 100;
+        }
+        
+        .settings-panel.open {
+            right: 0;
+        }
+        
+        .settings-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+        
+        .settings-header h3 {
+            font-size: 18px;
+        }
+        
+        .close-btn {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            font-size: 24px;
+            cursor: pointer;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+        
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 12px;
+            background: var(--bg-dark);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 14px;
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+        
+        /* Overlay */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            z-index: 99;
+        }
+        
+        .overlay.show {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <nav class="sidebar">
+            <div class="logo">
+                <h1>📈 52期投资学习</h1>
+                <p>洞察市场博弈之道</p>
+            </div>
+            
+            <div class="nav-section">
+                <h3>学习进度</h3>
+                <div class="nav-item active" onclick="showDashboard()">
+                    <span class="icon">🏠</span>
+                    <span class="label">仪表盘</span>
+                </div>
+            </div>
+            
+            <div class="nav-section">
+                <h3>课程内容</h3>
+                <div class="quarter-nav" id="q1Nav">
+                    <div class="quarter-header" onclick="toggleQuarter('q1')">
+                        <span class="icon">📚</span>
+                        <span class="label">Q1 认识自我与市场</span>
+                        <span class="arrow">▶</span>
+                    </div>
+                    <div class="quarter-episodes" id="q1Episodes"></div>
+                </div>
+                <div class="quarter-nav" id="q2Nav">
+                    <div class="quarter-header" onclick="toggleQuarter('q2')">
+                        <span class="icon">🧠</span>
+                        <span class="label">Q2 理解博弈与行为</span>
+                        <span class="arrow">▶</span>
+                    </div>
+                    <div class="quarter-episodes" id="q2Episodes"></div>
+                </div>
+                <div class="quarter-nav" id="q3Nav">
+                    <div class="quarter-header" onclick="toggleQuarter('q3')">
+                        <span class="icon">⚙️</span>
+                        <span class="label">Q3 建立系统与策略</span>
+                        <span class="arrow">▶</span>
+                    </div>
+                    <div class="quarter-episodes" id="q3Episodes"></div>
+                </div>
+                <div class="quarter-nav" id="q4Nav">
+                    <div class="quarter-header" onclick="toggleQuarter('q4')">
+                        <span class="icon">🚀</span>
+                        <span class="label">Q4 实战与进化</span>
+                        <span class="arrow">▶</span>
+                    </div>
+                    <div class="quarter-episodes" id="q4Episodes"></div>
+                </div>
+            </div>
+            
+            <div class="nav-section">
+                <h3>工具</h3>
+                <div class="nav-item" onclick="openSettings()">
+                    <span class="icon">⚙️</span>
+                    <span class="label">设置</span>
+                </div>
+            </div>
+        </nav>
+        
+        <!-- Main Content -->
+        <main class="main-content" id="mainContent">
+            <!-- Dashboard view -->
+            <div id="dashboardView">
+                <div class="content-header">
+                    <div class="breadcrumb">首页</div>
+                    <h2>欢迎回来 👋</h2>
+                    <p>继续你的投资学习之旅</p>
+                </div>
+                
+                <div class="progress-section">
+                    <div class="progress-header">
+                        <span>总体进度</span>
+                        <span id="progressText">0/52 期完成</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+                    </div>
+                </div>
+                
+                <div class="content-area">
+                    <h3>📌 继续学习</h3>
+                    <p>点击左侧季度展开课程列表，选择期数开始学习。</p>
+                    <p>每期包含：主内容 + AI深度学习包 + 费曼作业</p>
+                    
+                    <div class="action-bar">
+                        <button class="btn btn-primary" onclick="startNextEpisode()">
+                            开始下一期 →
+                        </button>
+                        <button class="btn btn-secondary" onclick="openSettings()">
+                            配置AI
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Episode view -->
+            <div id="episodeView" style="display: none;">
+                <div class="content-header">
+                    <div class="breadcrumb" id="episodeBreadcrumb">Q1 / EP01</div>
+                    <h2 id="episodeTitle">投资的第一性原理</h2>
+                </div>
+                
+                <div class="tabs">
+                    <div class="tab active" onclick="switchTab('content')">📘 主内容</div>
+                    <div class="tab" onclick="switchTab('ai')">🤖 AI学习</div>
+                    <div class="tab" onclick="switchTab('homework')">✏️ 费曼作业</div>
+                </div>
+                
+                <div class="content-area">
+                    <div id="tabContent" class="markdown-content">
+                        <!-- Content will be loaded here -->
+                    </div>
+                    
+                    <div class="action-bar">
+                        <button class="btn btn-secondary" onclick="prevEpisode()">← 上一期</button>
+                        <button class="btn btn-success" onclick="markComplete()">✓ 标记完成</button>
+                        <button class="btn btn-primary" onclick="nextEpisode()">下一期 →</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <!-- Settings Panel -->
+    <div class="overlay" id="overlay" onclick="closeSettings()"></div>
+    <div class="settings-panel" id="settingsPanel">
+        <div class="settings-header">
+            <h3>⚙️ 设置</h3>
+            <button class="close-btn" onclick="closeSettings()">×</button>
+        </div>
+        
+        <div class="form-group">
+            <label>AI Provider</label>
+            <select id="aiProvider">
+                <option value="openai">OpenAI</option>
+                <option value="gemini">Google Gemini</option>
+                <option value="claude">Anthropic Claude</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label>API Key</label>
+            <input type="password" id="apiKey" placeholder="输入你的API Key">
+        </div>
+        
+        <button class="btn btn-primary" onclick="saveSettings()" style="width: 100%;">
+            保存设置
+        </button>
+        
+        <div style="margin-top: 24px; padding-top: 24px; border-top: 1px solid var(--border);">
+            <h4 style="margin-bottom: 12px;">数据管理</h4>
+            <button class="btn btn-secondary" onclick="exportData()" style="width: 100%; margin-bottom: 8px;">
+                导出学习数据
+            </button>
+            <button class="btn btn-secondary" onclick="resetProgress()" style="width: 100%;">
+                重置进度
+            </button>
+        </div>
+    </div>
+    
+    <script>
+        // Episode data
+        const episodes = {
+            q1: [
+                { id: 1, title: '投资的第一性原理' },
+                { id: 2, title: '为什么大多数人亏钱' },
+                { id: 3, title: '市场是一台什么机器' },
+                { id: 4, title: '谁在和你博弈' },
+                { id: 5, title: '信息不对称的真相' },
+                { id: 6, title: '基金经理的激励错位' },
+                { id: 7, title: '认知自己的财务状况' },
+                { id: 8, title: '风险容忍度自测' },
+                { id: 9, title: '投资目标的设定' },
+                { id: 10, title: '时间的复利效应' },
+                { id: 11, title: '成本的隐形杀手' },
+                { id: 12, title: '情绪日记初体验' },
+                { id: 13, title: 'Q1季度复盘' }
+            ],
+            q2: [
+                { id: 14, title: '市场是人心的映射' },
+                { id: 15, title: '贪婪与恐惧的神经科学' },
+                { id: 16, title: '12个致命认知偏差' },
+                { id: 17, title: '羊群效应的力量' },
+                { id: 18, title: '叙事经济学' },
+                { id: 19, title: '美联储的心理游戏' },
+                { id: 20, title: '庄家思维入门' },
+                { id: 21, title: '博弈论基础' },
+                { id: 22, title: '反身性理论' },
+                { id: 23, title: '市场周期的心理阶段' },
+                { id: 24, title: '信息茧房与逆向思维' },
+                { id: 25, title: '群体智慧vs群体疯狂' },
+                { id: 26, title: 'Q2季度复盘' }
+            ],
+            q3: [
+                { id: 27, title: '什么是投资系统' },
+                { id: 28, title: '资产配置的数学原理' },
+                { id: 29, title: '仓位管理的生存法则' },
+                { id: 30, title: '入场规则设计' },
+                { id: 31, title: '出场规则设计' },
+                { id: 32, title: '风险预算思维' },
+                { id: 33, title: '因子投资入门' },
+                { id: 34, title: 'ETF与被动投资' },
+                { id: 35, title: 'AI在投资中的应用' },
+                { id: 36, title: '用AI构建信息过滤系统' },
+                { id: 37, title: '回测思维与局限' },
+                { id: 38, title: '系统文档化' },
+                { id: 39, title: 'Q3季度复盘' }
+            ],
+            q4: [
+                { id: 40, title: '小额实盘启动' },
+                { id: 41, title: '交易日志的力量' },
+                { id: 42, title: '周复盘方法论' },
+                { id: 43, title: '处理连续亏损' },
+                { id: 44, title: '处理连续盈利' },
+                { id: 45, title: '市场异常事件应对' },
+                { id: 46, title: '从错误中学习的框架' },
+                { id: 47, title: '升级你的投资系统' },
+                { id: 48, title: '建立自己的原则清单' },
+                { id: 49, title: '与AI协作的进阶' },
+                { id: 50, title: '社区与成长' },
+                { id: 51, title: '年度复盘' },
+                { id: 52, title: '合格投资者的定义' }
+            ]
+        };
+        
+        // State
+        let currentEpisode = 1;
+        let completedEpisodes = JSON.parse(localStorage.getItem('completedEpisodes') || '[]');
+        let settings = JSON.parse(localStorage.getItem('settings') || '{}');
+        
+        // Initialize
+        function init() {
+            renderEpisodeList();
+            updateProgress();
+            loadSettings();
+        }
+        
+        function renderEpisodeList() {
+            ['q1', 'q2', 'q3', 'q4'].forEach(quarter => {
+                const container = document.getElementById(`${quarter}Episodes`);
+                container.innerHTML = episodes[quarter].map(ep => `
+                    <div class="episode-item ${completedEpisodes.includes(ep.id) ? 'completed' : ''} ${currentEpisode === ep.id ? 'current' : ''}" 
+                         onclick="loadEpisode(${ep.id})">
+                        EP${String(ep.id).padStart(2, '0')} ${ep.title}
+                    </div>
+                `).join('');
+            });
+        }
+        
+        function toggleQuarter(quarter) {
+            const header = document.querySelector(`#${quarter}Nav .quarter-header`);
+            const episodes = document.getElementById(`${quarter}Episodes`);
+            header.classList.toggle('expanded');
+            episodes.classList.toggle('show');
+        }
+        
+        function loadEpisode(id) {
+            currentEpisode = id;
+            document.getElementById('dashboardView').style.display = 'none';
+            document.getElementById('episodeView').style.display = 'block';
+            
+            const quarter = id <= 13 ? 'q1' : id <= 26 ? 'q2' : id <= 39 ? 'q3' : 'q4';
+            const ep = episodes[quarter].find(e => e.id === id);
+            
+            document.getElementById('episodeBreadcrumb').textContent = `${quarter.toUpperCase()} / EP${String(id).padStart(2, '0')}`;
+            document.getElementById('episodeTitle').textContent = ep.title;
+            
+            switchTab('content');
+            renderEpisodeList();
+        }
+        
+        function switchTab(tab) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            const content = document.getElementById('tabContent');
+            if (tab === 'content') {
+                content.innerHTML = `
+                    <h3>📘 EP${String(currentEpisode).padStart(2, '0')} 主内容</h3>
+                    <p>主内容将从 markdown 文件加载...</p>
+                    <blockquote>内容文件路径: Q${Math.ceil(currentEpisode/13)}-xxx/EP${String(currentEpisode).padStart(2, '0')}-xxx.md</blockquote>
+                `;
+            } else if (tab === 'ai') {
+                content.innerHTML = `
+                    <h3>🤖 AI深度学习</h3>
+                    <p>使用以下 Prompt 与 AI 对话，深化理解：</p>
+                    <pre><code>AI学习包内容将从 AI-Prompts/EP${String(currentEpisode).padStart(2, '0')}-深度学习包.md 加载</code></pre>
+                    <button class="btn btn-primary" style="margin-top: 16px;" onclick="openAIChat()">
+                        开始AI对话 →
+                    </button>
+                `;
+            } else {
+                content.innerHTML = `
+                    <h3>✏️ 费曼作业</h3>
+                    <p>用自己的话解释本期核心概念：</p>
+                    <textarea style="width: 100%; height: 200px; background: var(--bg-dark); border: 1px solid var(--border); border-radius: 8px; padding: 16px; color: var(--text-primary); resize: vertical;" placeholder="在这里写下你的理解..."></textarea>
+                `;
+            }
+        }
+        
+        function showDashboard() {
+            document.getElementById('dashboardView').style.display = 'block';
+            document.getElementById('episodeView').style.display = 'none';
+        }
+        
+        function markComplete() {
+            if (!completedEpisodes.includes(currentEpisode)) {
+                completedEpisodes.push(currentEpisode);
+                localStorage.setItem('completedEpisodes', JSON.stringify(completedEpisodes));
+                updateProgress();
+                renderEpisodeList();
+            }
+            nextEpisode();
+        }
+        
+        function updateProgress() {
+            const percent = (completedEpisodes.length / 52) * 100;
+            document.getElementById('progressFill').style.width = percent + '%';
+            document.getElementById('progressText').textContent = `${completedEpisodes.length}/52 期完成`;
+        }
+        
+        function prevEpisode() {
+            if (currentEpisode > 1) loadEpisode(currentEpisode - 1);
+        }
+        
+        function nextEpisode() {
+            if (currentEpisode < 52) loadEpisode(currentEpisode + 1);
+        }
+        
+        function startNextEpisode() {
+            const next = completedEpisodes.length > 0 ? Math.max(...completedEpisodes) + 1 : 1;
+            if (next <= 52) loadEpisode(next);
+        }
+        
+        function openSettings() {
+            document.getElementById('overlay').classList.add('show');
+            document.getElementById('settingsPanel').classList.add('open');
+        }
+        
+        function closeSettings() {
+            document.getElementById('overlay').classList.remove('show');
+            document.getElementById('settingsPanel').classList.remove('open');
+        }
+        
+        function saveSettings() {
+            settings = {
+                provider: document.getElementById('aiProvider').value,
+                apiKey: document.getElementById('apiKey').value
+            };
+            localStorage.setItem('settings', JSON.stringify(settings));
+            alert('设置已保存！');
+            closeSettings();
+        }
+        
+        function loadSettings() {
+            if (settings.provider) document.getElementById('aiProvider').value = settings.provider;
+            if (settings.apiKey) document.getElementById('apiKey').value = settings.apiKey;
+        }
+        
+        function exportData() {
+            const data = {
+                completedEpisodes,
+                settings,
+                exportDate: new Date().toISOString()
+            };
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = '学习数据备份.json';
+            a.click();
+        }
+        
+        function resetProgress() {
+            if (confirm('确定要重置所有学习进度吗？')) {
+                completedEpisodes = [];
+                localStorage.setItem('completedEpisodes', '[]');
+                updateProgress();
+                renderEpisodeList();
+            }
+        }
+        
+        function openAIChat() {
+            if (!settings.apiKey) {
+                alert('请先在设置中配置 API Key');
+                openSettings();
+                return;
+            }
+            // TODO: Open AI chat interface
+            alert('AI对话功能开发中...');
+        }
+        
+        // Initialize on load
+        init();
+    </script>
+</body>
+</html>

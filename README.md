@@ -66,3 +66,7 @@
 - 成为你的思维对手盘
 
 详见 [templates/ai-prompts/](./templates/ai-prompts/)
+
+
+## Reference
+Terry Smith

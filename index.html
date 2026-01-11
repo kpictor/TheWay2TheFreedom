@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -17,26 +18,26 @@
             --warning: #f59e0b;
             --border: #334155;
         }
-        
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-        
+
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: var(--bg-dark);
             color: var(--text-primary);
             min-height: 100vh;
         }
-        
+
         /* Layout */
         .app-container {
             display: flex;
             min-height: 100vh;
         }
-        
+
         /* Sidebar */
         .sidebar {
             width: 280px;
@@ -48,12 +49,12 @@
             height: 100vh;
             overflow-y: auto;
         }
-        
+
         .logo {
             padding: 24px;
             border-bottom: 1px solid var(--border);
         }
-        
+
         .logo h1 {
             font-size: 18px;
             font-weight: 600;
@@ -61,18 +62,18 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
-        
+
         .logo p {
             font-size: 12px;
             color: var(--text-secondary);
             margin-top: 4px;
         }
-        
+
         /* Navigation */
         .nav-section {
             padding: 16px;
         }
-        
+
         .nav-section h3 {
             font-size: 11px;
             text-transform: uppercase;
@@ -80,7 +81,7 @@
             color: var(--text-secondary);
             margin-bottom: 12px;
         }
-        
+
         .nav-item {
             display: flex;
             align-items: center;
@@ -90,24 +91,24 @@
             transition: all 0.2s;
             margin-bottom: 4px;
         }
-        
+
         .nav-item:hover {
             background: var(--bg-hover);
         }
-        
+
         .nav-item.active {
             background: var(--primary);
         }
-        
+
         .nav-item .icon {
             width: 20px;
             margin-right: 12px;
         }
-        
+
         .nav-item .label {
             font-size: 14px;
         }
-        
+
         .nav-item .badge {
             margin-left: auto;
             background: var(--success);
@@ -116,12 +117,12 @@
             padding: 2px 8px;
             border-radius: 10px;
         }
-        
+
         /* Quarter sections */
         .quarter-nav {
             margin-top: 8px;
         }
-        
+
         .quarter-header {
             display: flex;
             align-items: center;
@@ -129,29 +130,29 @@
             cursor: pointer;
             border-radius: 8px;
         }
-        
+
         .quarter-header:hover {
             background: var(--bg-hover);
         }
-        
+
         .quarter-header .arrow {
             margin-left: auto;
             transition: transform 0.2s;
         }
-        
+
         .quarter-header.expanded .arrow {
             transform: rotate(90deg);
         }
-        
+
         .quarter-episodes {
             display: none;
             padding-left: 24px;
         }
-        
+
         .quarter-episodes.show {
             display: block;
         }
-        
+
         .episode-item {
             display: flex;
             align-items: center;
@@ -161,51 +162,51 @@
             cursor: pointer;
             border-radius: 6px;
         }
-        
+
         .episode-item:hover {
             background: var(--bg-hover);
             color: var(--text-primary);
         }
-        
+
         .episode-item.completed::before {
             content: '✓';
             color: var(--success);
             margin-right: 8px;
         }
-        
+
         .episode-item.current {
             background: var(--primary);
             color: white;
         }
-        
+
         /* Main content */
         .main-content {
             margin-left: 280px;
             flex: 1;
             padding: 32px;
         }
-        
+
         /* Header */
         .content-header {
             margin-bottom: 32px;
         }
-        
+
         .breadcrumb {
             font-size: 13px;
             color: var(--text-secondary);
             margin-bottom: 8px;
         }
-        
+
         .content-header h2 {
             font-size: 28px;
             font-weight: 600;
             margin-bottom: 8px;
         }
-        
+
         .content-header p {
             color: var(--text-secondary);
         }
-        
+
         /* Progress bar */
         .progress-section {
             background: var(--bg-card);
@@ -213,45 +214,45 @@
             padding: 24px;
             margin-bottom: 24px;
         }
-        
+
         .progress-header {
             display: flex;
             justify-content: space-between;
             margin-bottom: 12px;
         }
-        
+
         .progress-bar {
             height: 8px;
             background: var(--bg-hover);
             border-radius: 4px;
             overflow: hidden;
         }
-        
+
         .progress-fill {
             height: 100%;
             background: linear-gradient(90deg, var(--primary), #a855f7);
             border-radius: 4px;
             transition: width 0.3s;
         }
-        
+
         /* Content area */
         .content-area {
             background: var(--bg-card);
             border-radius: 12px;
             padding: 32px;
         }
-        
+
         .content-area h3 {
             font-size: 20px;
             margin-bottom: 16px;
         }
-        
+
         .content-area p {
             color: var(--text-secondary);
             line-height: 1.7;
             margin-bottom: 16px;
         }
-        
+
         /* Tabs */
         .tabs {
             display: flex;
@@ -260,7 +261,7 @@
             border-bottom: 1px solid var(--border);
             padding-bottom: 12px;
         }
-        
+
         .tab {
             padding: 8px 16px;
             border-radius: 6px;
@@ -269,33 +270,35 @@
             color: var(--text-secondary);
             transition: all 0.2s;
         }
-        
+
         .tab:hover {
             background: var(--bg-hover);
         }
-        
+
         .tab.active {
             background: var(--primary);
             color: white;
         }
-        
+
         /* Markdown content */
         .markdown-content {
             line-height: 1.8;
         }
-        
-        .markdown-content h1, .markdown-content h2, .markdown-content h3 {
+
+        .markdown-content h1,
+        .markdown-content h2,
+        .markdown-content h3 {
             margin-top: 24px;
             margin-bottom: 12px;
         }
-        
+
         .markdown-content code {
             background: var(--bg-hover);
             padding: 2px 6px;
             border-radius: 4px;
             font-size: 14px;
         }
-        
+
         .markdown-content pre {
             background: var(--bg-dark);
             padding: 16px;
@@ -303,14 +306,14 @@
             overflow-x: auto;
             margin: 16px 0;
         }
-        
+
         .markdown-content blockquote {
             border-left: 4px solid var(--primary);
             padding-left: 16px;
             color: var(--text-secondary);
             margin: 16px 0;
         }
-        
+
         /* Action buttons */
         .action-bar {
             display: flex;
@@ -319,7 +322,7 @@
             padding-top: 24px;
             border-top: 1px solid var(--border);
         }
-        
+
         .btn {
             padding: 12px 24px;
             border-radius: 8px;
@@ -329,30 +332,30 @@
             border: none;
             transition: all 0.2s;
         }
-        
+
         .btn-primary {
             background: var(--primary);
             color: white;
         }
-        
+
         .btn-primary:hover {
             background: var(--primary-dark);
         }
-        
+
         .btn-secondary {
             background: var(--bg-hover);
             color: var(--text-primary);
         }
-        
+
         .btn-secondary:hover {
             background: #475569;
         }
-        
+
         .btn-success {
             background: var(--success);
             color: white;
         }
-        
+
         /* Settings panel */
         .settings-panel {
             position: fixed;
@@ -366,22 +369,22 @@
             transition: right 0.3s;
             z-index: 100;
         }
-        
+
         .settings-panel.open {
             right: 0;
         }
-        
+
         .settings-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 24px;
         }
-        
+
         .settings-header h3 {
             font-size: 18px;
         }
-        
+
         .close-btn {
             background: none;
             border: none;
@@ -389,19 +392,20 @@
             font-size: 24px;
             cursor: pointer;
         }
-        
+
         .form-group {
             margin-bottom: 20px;
         }
-        
+
         .form-group label {
             display: block;
             margin-bottom: 8px;
             font-size: 14px;
             color: var(--text-secondary);
         }
-        
-        .form-group input, .form-group select {
+
+        .form-group input,
+        .form-group select {
             width: 100%;
             padding: 12px;
             background: var(--bg-dark);
@@ -410,12 +414,12 @@
             color: var(--text-primary);
             font-size: 14px;
         }
-        
+
         .form-group input:focus {
             outline: none;
             border-color: var(--primary);
         }
-        
+
         /* Overlay */
         .overlay {
             position: fixed;
@@ -423,17 +427,138 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0,0,0,0.5);
+            background: rgba(0, 0, 0, 0.5);
             display: none;
             z-index: 99;
         }
-        
+
         .overlay.show {
             display: block;
         }
+
+        /* Login Screen */
+        .login-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, var(--bg-dark) 0%, #1a1a2e 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 200;
+        }
+
+        .login-screen.hidden {
+            display: none;
+        }
+
+        .login-box {
+            background: var(--bg-card);
+            padding: 48px;
+            border-radius: 16px;
+            width: 400px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .login-box h2 {
+            text-align: center;
+            margin-bottom: 8px;
+            font-size: 24px;
+        }
+
+        .login-box .subtitle {
+            text-align: center;
+            color: var(--text-secondary);
+            margin-bottom: 32px;
+            font-size: 14px;
+        }
+
+        .login-box .form-group {
+            margin-bottom: 20px;
+        }
+
+        .login-box .error-msg {
+            color: #ef4444;
+            font-size: 13px;
+            margin-top: 8px;
+            display: none;
+        }
+
+        .login-box .error-msg.show {
+            display: block;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+            background: var(--bg-hover);
+            border-radius: 8px;
+            margin-bottom: 16px;
+        }
+
+        .user-info .avatar {
+            width: 36px;
+            height: 36px;
+            background: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+            font-size: 16px;
+        }
+
+        .user-info .username {
+            flex: 1;
+            font-size: 14px;
+        }
+
+        .user-info .logout-btn {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .user-info .logout-btn:hover {
+            color: var(--text-primary);
+        }
     </style>
 </head>
+
 <body>
+    <!-- Login Screen -->
+    <div class="login-screen" id="loginScreen">
+        <div class="login-box">
+            <h2>📈 52期投资学习</h2>
+            <p class="subtitle">洞察市场博弈之道</p>
+
+            <div class="form-group">
+                <label>用户名</label>
+                <input type="text" id="loginUsername" placeholder="输入用户名">
+            </div>
+
+            <div class="form-group">
+                <label>密码</label>
+                <input type="password" id="loginPassword" placeholder="输入密码">
+            </div>
+
+            <div class="error-msg" id="loginError">登录失败</div>
+
+            <button class="btn btn-primary" onclick="login()" style="width: 100%; margin-top: 8px;">
+                登录 / 注册
+            </button>
+
+            <p style="text-align: center; margin-top: 16px; font-size: 12px; color: var(--text-secondary);">
+                新用户自动注册
+            </p>
+        </div>
+    </div>
+
     <div class="app-container">
         <!-- Sidebar -->
         <nav class="sidebar">
@@ -441,7 +566,14 @@
                 <h1>📈 52期投资学习</h1>
                 <p>洞察市场博弈之道</p>
             </div>
-            
+
+            <!-- User Info -->
+            <div class="user-info" id="userInfo" style="margin: 16px;">
+                <div class="avatar">👤</div>
+                <span class="username" id="displayUsername">未登录</span>
+                <button class="logout-btn" onclick="logout()">退出</button>
+            </div>
+
             <div class="nav-section">
                 <h3>学习进度</h3>
                 <div class="nav-item active" onclick="showDashboard()">
@@ -449,7 +581,7 @@
                     <span class="label">仪表盘</span>
                 </div>
             </div>
-            
+
             <div class="nav-section">
                 <h3>课程内容</h3>
                 <div class="quarter-nav" id="q1Nav">
@@ -485,7 +617,7 @@
                     <div class="quarter-episodes" id="q4Episodes"></div>
                 </div>
             </div>
-            
+
             <div class="nav-section">
                 <h3>工具</h3>
                 <div class="nav-item" onclick="openSettings()">
@@ -494,7 +626,7 @@
                 </div>
             </div>
         </nav>
-        
+
         <!-- Main Content -->
         <main class="main-content" id="mainContent">
             <!-- Dashboard view -->
@@ -504,7 +636,7 @@
                     <h2>欢迎回来 👋</h2>
                     <p>继续你的投资学习之旅</p>
                 </div>
-                
+
                 <div class="progress-section">
                     <div class="progress-header">
                         <span>总体进度</span>
@@ -514,12 +646,12 @@
                         <div class="progress-fill" id="progressFill" style="width: 0%"></div>
                     </div>
                 </div>
-                
+
                 <div class="content-area">
                     <h3>📌 继续学习</h3>
                     <p>点击左侧季度展开课程列表，选择期数开始学习。</p>
                     <p>每期包含：主内容 + AI深度学习包 + 费曼作业</p>
-                    
+
                     <div class="action-bar">
                         <button class="btn btn-primary" onclick="startNextEpisode()">
                             开始下一期 →
@@ -530,25 +662,25 @@
                     </div>
                 </div>
             </div>
-            
+
             <!-- Episode view -->
             <div id="episodeView" style="display: none;">
                 <div class="content-header">
                     <div class="breadcrumb" id="episodeBreadcrumb">Q1 / EP01</div>
                     <h2 id="episodeTitle">投资的第一性原理</h2>
                 </div>
-                
+
                 <div class="tabs">
                     <div class="tab active" onclick="switchTab('content')">📘 主内容</div>
                     <div class="tab" onclick="switchTab('ai')">🤖 AI学习</div>
                     <div class="tab" onclick="switchTab('homework')">✏️ 费曼作业</div>
                 </div>
-                
+
                 <div class="content-area">
                     <div id="tabContent" class="markdown-content">
                         <!-- Content will be loaded here -->
                     </div>
-                    
+
                     <div class="action-bar">
                         <button class="btn btn-secondary" onclick="prevEpisode()">← 上一期</button>
                         <button class="btn btn-success" onclick="markComplete()">✓ 标记完成</button>
@@ -558,7 +690,7 @@
             </div>
         </main>
     </div>
-    
+
     <!-- Settings Panel -->
     <div class="overlay" id="overlay" onclick="closeSettings()"></div>
     <div class="settings-panel" id="settingsPanel">
@@ -566,7 +698,7 @@
             <h3>⚙️ 设置</h3>
             <button class="close-btn" onclick="closeSettings()">×</button>
         </div>
-        
+
         <div class="form-group">
             <label>AI Provider</label>
             <select id="aiProvider">
@@ -575,16 +707,16 @@
                 <option value="claude">Anthropic Claude</option>
             </select>
         </div>
-        
+
         <div class="form-group">
             <label>API Key</label>
             <input type="password" id="apiKey" placeholder="输入你的API Key">
         </div>
-        
+
         <button class="btn btn-primary" onclick="saveSettings()" style="width: 100%;">
             保存设置
         </button>
-        
+
         <div style="margin-top: 24px; padding-top: 24px; border-top: 1px solid var(--border);">
             <h4 style="margin-bottom: 12px;">数据管理</h4>
             <button class="btn btn-secondary" onclick="exportData()" style="width: 100%; margin-bottom: 8px;">
@@ -595,7 +727,7 @@
             </button>
         </div>
     </div>
-    
+
     <script>
         // Episode data
         const episodes = {
@@ -660,19 +792,139 @@
                 { id: 52, title: '合格投资者的定义' }
             ]
         };
-        
+
+        // API Base URL (change for production)
+        const API_BASE = window.location.hostname === 'localhost' ? 'http://localhost:3000' : '';
+
         // State
+        let currentUser = null;
         let currentEpisode = 1;
-        let completedEpisodes = JSON.parse(localStorage.getItem('completedEpisodes') || '[]');
-        let settings = JSON.parse(localStorage.getItem('settings') || '{}');
-        
+        let completedEpisodes = [];
+        let settings = {};
+
         // Initialize
         function init() {
+            // Check if logged in
+            const savedUser = localStorage.getItem('currentUser');
+            if (savedUser) {
+                currentUser = savedUser;
+                document.getElementById('loginScreen').classList.add('hidden');
+                document.getElementById('displayUsername').textContent = currentUser;
+                loadUserData();
+            }
             renderEpisodeList();
             updateProgress();
             loadSettings();
         }
-        
+
+        // Login function
+        async function login() {
+            const username = document.getElementById('loginUsername').value.trim();
+            const password = document.getElementById('loginPassword').value;
+
+            if (!username || !password) {
+                showLoginError('请输入用户名和密码');
+                return;
+            }
+
+            try {
+                const res = await fetch(`${API_BASE}/api/auth`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+
+                const data = await res.json();
+
+                if (data.success) {
+                    currentUser = data.username;
+                    localStorage.setItem('currentUser', currentUser);
+                    document.getElementById('loginScreen').classList.add('hidden');
+                    document.getElementById('displayUsername').textContent = currentUser;
+
+                    // Load user data
+                    if (data.data) {
+                        completedEpisodes = data.data.completedEpisodes || [];
+                        currentEpisode = data.data.currentEpisode || 1;
+                    }
+
+                    updateProgress();
+                    renderEpisodeList();
+                } else {
+                    showLoginError(data.error || '登录失败');
+                }
+            } catch (err) {
+                // Fallback to localStorage if server not available
+                console.log('Server not available, using localStorage');
+                currentUser = username;
+                localStorage.setItem('currentUser', currentUser);
+                completedEpisodes = JSON.parse(localStorage.getItem(`progress_${username}`) || '[]');
+                document.getElementById('loginScreen').classList.add('hidden');
+                document.getElementById('displayUsername').textContent = currentUser;
+                updateProgress();
+                renderEpisodeList();
+            }
+        }
+
+        function showLoginError(msg) {
+            const el = document.getElementById('loginError');
+            el.textContent = msg;
+            el.classList.add('show');
+            setTimeout(() => el.classList.remove('show'), 3000);
+        }
+
+        function logout() {
+            currentUser = null;
+            localStorage.removeItem('currentUser');
+            completedEpisodes = [];
+            document.getElementById('loginScreen').classList.remove('hidden');
+            document.getElementById('loginUsername').value = '';
+            document.getElementById('loginPassword').value = '';
+        }
+
+        async function loadUserData() {
+            if (!currentUser) return;
+
+            try {
+                const res = await fetch(`${API_BASE}/api/progress/${currentUser}`);
+                const data = await res.json();
+
+                if (data.success && data.progress) {
+                    completedEpisodes = data.progress.completedEpisodes || [];
+                    currentEpisode = data.progress.currentEpisode || 1;
+                    updateProgress();
+                    renderEpisodeList();
+                }
+            } catch (err) {
+                // Fallback to localStorage
+                completedEpisodes = JSON.parse(localStorage.getItem(`progress_${currentUser}`) || '[]');
+                updateProgress();
+                renderEpisodeList();
+            }
+        }
+
+        async function saveUserProgress() {
+            if (!currentUser) return;
+
+            // Always save to localStorage as backup
+            localStorage.setItem(`progress_${currentUser}`, JSON.stringify(completedEpisodes));
+
+            try {
+                await fetch(`${API_BASE}/api/progress/${currentUser}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        progress: {
+                            completedEpisodes,
+                            currentEpisode
+                        }
+                    })
+                });
+            } catch (err) {
+                console.log('Server not available, saved to localStorage');
+            }
+        }
+
         function renderEpisodeList() {
             ['q1', 'q2', 'q3', 'q4'].forEach(quarter => {
                 const container = document.getElementById(`${quarter}Episodes`);
@@ -684,39 +936,39 @@
                 `).join('');
             });
         }
-        
+
         function toggleQuarter(quarter) {
             const header = document.querySelector(`#${quarter}Nav .quarter-header`);
             const episodes = document.getElementById(`${quarter}Episodes`);
             header.classList.toggle('expanded');
             episodes.classList.toggle('show');
         }
-        
+
         function loadEpisode(id) {
             currentEpisode = id;
             document.getElementById('dashboardView').style.display = 'none';
             document.getElementById('episodeView').style.display = 'block';
-            
+
             const quarter = id <= 13 ? 'q1' : id <= 26 ? 'q2' : id <= 39 ? 'q3' : 'q4';
             const ep = episodes[quarter].find(e => e.id === id);
-            
+
             document.getElementById('episodeBreadcrumb').textContent = `${quarter.toUpperCase()} / EP${String(id).padStart(2, '0')}`;
             document.getElementById('episodeTitle').textContent = ep.title;
-            
+
             switchTab('content');
             renderEpisodeList();
         }
-        
+
         function switchTab(tab) {
             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
             event.target.classList.add('active');
-            
+
             const content = document.getElementById('tabContent');
             if (tab === 'content') {
                 content.innerHTML = `
                     <h3>📘 EP${String(currentEpisode).padStart(2, '0')} 主内容</h3>
                     <p>主内容将从 markdown 文件加载...</p>
-                    <blockquote>内容文件路径: Q${Math.ceil(currentEpisode/13)}-xxx/EP${String(currentEpisode).padStart(2, '0')}-xxx.md</blockquote>
+                    <blockquote>内容文件路径: Q${Math.ceil(currentEpisode / 13)}-xxx/EP${String(currentEpisode).padStart(2, '0')}-xxx.md</blockquote>
                 `;
             } else if (tab === 'ai') {
                 content.innerHTML = `
@@ -735,51 +987,51 @@
                 `;
             }
         }
-        
+
         function showDashboard() {
             document.getElementById('dashboardView').style.display = 'block';
             document.getElementById('episodeView').style.display = 'none';
         }
-        
+
         function markComplete() {
             if (!completedEpisodes.includes(currentEpisode)) {
                 completedEpisodes.push(currentEpisode);
-                localStorage.setItem('completedEpisodes', JSON.stringify(completedEpisodes));
+                saveUserProgress();
                 updateProgress();
                 renderEpisodeList();
             }
             nextEpisode();
         }
-        
+
         function updateProgress() {
             const percent = (completedEpisodes.length / 52) * 100;
             document.getElementById('progressFill').style.width = percent + '%';
             document.getElementById('progressText').textContent = `${completedEpisodes.length}/52 期完成`;
         }
-        
+
         function prevEpisode() {
             if (currentEpisode > 1) loadEpisode(currentEpisode - 1);
         }
-        
+
         function nextEpisode() {
             if (currentEpisode < 52) loadEpisode(currentEpisode + 1);
         }
-        
+
         function startNextEpisode() {
             const next = completedEpisodes.length > 0 ? Math.max(...completedEpisodes) + 1 : 1;
             if (next <= 52) loadEpisode(next);
         }
-        
+
         function openSettings() {
             document.getElementById('overlay').classList.add('show');
             document.getElementById('settingsPanel').classList.add('open');
         }
-        
+
         function closeSettings() {
             document.getElementById('overlay').classList.remove('show');
             document.getElementById('settingsPanel').classList.remove('open');
         }
-        
+
         function saveSettings() {
             settings = {
                 provider: document.getElementById('aiProvider').value,
@@ -789,12 +1041,12 @@
             alert('设置已保存！');
             closeSettings();
         }
-        
+
         function loadSettings() {
             if (settings.provider) document.getElementById('aiProvider').value = settings.provider;
             if (settings.apiKey) document.getElementById('apiKey').value = settings.apiKey;
         }
-        
+
         function exportData() {
             const data = {
                 completedEpisodes,
@@ -807,7 +1059,7 @@
             a.download = '学习数据备份.json';
             a.click();
         }
-        
+
         function resetProgress() {
             if (confirm('确定要重置所有学习进度吗？')) {
                 completedEpisodes = [];
@@ -816,7 +1068,7 @@
                 renderEpisodeList();
             }
         }
-        
+
         function openAIChat() {
             if (!settings.apiKey) {
                 alert('请先在设置中配置 API Key');
@@ -826,9 +1078,10 @@
             // TODO: Open AI chat interface
             alert('AI对话功能开发中...');
         }
-        
+
         // Initialize on load
         init();
     </script>
 </body>
+
 </html>

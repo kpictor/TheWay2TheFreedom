@@ -527,6 +527,101 @@
         .user-info .logout-btn:hover {
             color: var(--text-primary);
         }
+
+        /* AI Chat Modal */
+        .ai-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 300;
+        }
+
+        .ai-modal.show {
+            display: flex;
+        }
+
+        .ai-modal-content {
+            background: var(--bg-card);
+            width: 90%;
+            max-width: 800px;
+            height: 80vh;
+            border-radius: 16px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .ai-modal-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .ai-modal-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 24px;
+        }
+
+        .ai-modal-footer {
+            padding: 16px 24px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            gap: 12px;
+        }
+
+        .ai-modal-footer input {
+            flex: 1;
+            padding: 12px 16px;
+            background: var(--bg-dark);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 14px;
+        }
+
+        .chat-message {
+            margin-bottom: 16px;
+            padding: 12px 16px;
+            border-radius: 8px;
+        }
+
+        .chat-message.user {
+            background: var(--primary);
+            margin-left: 20%;
+        }
+
+        .chat-message.ai {
+            background: var(--bg-hover);
+            margin-right: 20%;
+        }
+
+        .chat-intro {
+            background: var(--bg-dark);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        .chat-intro h4 {
+            margin-bottom: 12px;
+            color: var(--primary);
+        }
+
+        /* Pre-formatted text for diagrams */
+        .markdown-content pre {
+            font-family: 'Consolas', 'Monaco', monospace;
+            white-space: pre;
+            overflow-x: auto;
+        }
     </style>
 </head>
 
@@ -683,7 +778,7 @@
 
                     <div class="action-bar">
                         <button class="btn btn-secondary" onclick="prevEpisode()">← 上一期</button>
-                        <button class="btn btn-success" onclick="markComplete()">✓ 标记完成</button>
+                        <button class="btn btn-success" id="completeBtn" onclick="toggleComplete()">✓ 标记完成</button>
                         <button class="btn btn-primary" onclick="nextEpisode()">下一期 →</button>
                     </div>
                 </div>
@@ -725,6 +820,24 @@
             <button class="btn btn-secondary" onclick="resetProgress()" style="width: 100%;">
                 重置进度
             </button>
+        </div>
+    </div>
+
+    <!-- AI Chat Modal -->
+    <div class="ai-modal" id="aiModal">
+        <div class="ai-modal-content">
+            <div class="ai-modal-header">
+                <h3 id="aiModalTitle">🤖 AI交互练习</h3>
+                <button class="close-btn" onclick="closeAIModal()">×</button>
+            </div>
+            <div class="ai-modal-body" id="aiChatBody">
+                <!-- Chat content will be loaded here -->
+            </div>
+            <div class="ai-modal-footer">
+                <input type="text" id="aiInput" placeholder="输入你的回答..."
+                    onkeypress="if(event.key==='Enter')sendAIMessage()">
+                <button class="btn btn-primary" onclick="sendAIMessage()">发送</button>
+            </div>
         </div>
     </div>
 
@@ -957,35 +1070,262 @@
 
             switchTab('content');
             renderEpisodeList();
+            updateCompleteButton();
         }
 
-        function switchTab(tab) {
+        async function switchTab(tab) {
             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-            event.target.classList.add('active');
+            if (event && event.target) event.target.classList.add('active');
 
             const content = document.getElementById('tabContent');
+            const epNum = String(currentEpisode);
+
             if (tab === 'content') {
-                content.innerHTML = `
-                    <h3>📘 EP${String(currentEpisode).padStart(2, '0')} 主内容</h3>
-                    <p>主内容将从 markdown 文件加载...</p>
-                    <blockquote>内容文件路径: Q${Math.ceil(currentEpisode / 13)}-xxx/EP${String(currentEpisode).padStart(2, '0')}-xxx.md</blockquote>
-                `;
+                content.innerHTML = '<p>加载中...</p>';
+                try {
+                    const res = await fetch(`${API_BASE}/api/content/episode/${epNum}`);
+                    const data = await res.json();
+                    if (data.success) {
+                        content.innerHTML = `<div class="markdown-content">${marked(data.content)}</div>`;
+                    } else {
+                        content.innerHTML = `<p>内容暂未填充</p>`;
+                    }
+                } catch (err) {
+                    content.innerHTML = `<p>加载失败: ${err.message}</p>`;
+                }
             } else if (tab === 'ai') {
-                content.innerHTML = `
-                    <h3>🤖 AI深度学习</h3>
-                    <p>使用以下 Prompt 与 AI 对话，深化理解：</p>
-                    <pre><code>AI学习包内容将从 AI-Prompts/EP${String(currentEpisode).padStart(2, '0')}-深度学习包.md 加载</code></pre>
-                    <button class="btn btn-primary" style="margin-top: 16px;" onclick="openAIChat()">
-                        开始AI对话 →
-                    </button>
-                `;
+                content.innerHTML = '<p>加载中...</p>';
+                try {
+                    // First get list of deep learning files
+                    const listRes = await fetch(`${API_BASE}/api/content/deep-learning/${epNum}`);
+                    const listData = await listRes.json();
+
+                    if (listData.success && listData.files.length > 0) {
+                        let html = '<h3>📚 深度学习资料</h3><div style="display: grid; gap: 12px;">';
+                        for (const file of listData.files) {
+                            html += `<div class="content-card" onclick="loadDeepContent('${file}')" style="padding: 16px; background: var(--bg-hover); border-radius: 8px; cursor: pointer;">
+                                <strong>${file}</strong>
+                            </div>`;
+                        }
+                        html += '</div><div id="deepContentArea" style="margin-top: 24px;"></div>';
+
+                        // Also list AI prompts
+                        const promptRes = await fetch(`${API_BASE}/api/content/ai-prompts/${epNum}`);
+                        const promptData = await promptRes.json();
+                        if (promptData.success && promptData.files.length > 0) {
+                            html += '<h3 style="margin-top: 32px;">🤖 AI交互练习</h3><div style="display: grid; gap: 12px;">';
+                            for (const file of promptData.files) {
+                                html += `<div class="content-card" onclick="loadPromptContent('${file}')" style="padding: 16px; background: var(--primary); border-radius: 8px; cursor: pointer; color: white;">
+                                    <strong>${file}</strong>
+                                </div>`;
+                            }
+                            html += '</div>';
+                        }
+
+                        content.innerHTML = html;
+                    } else {
+                        content.innerHTML = '<p>深度学习内容暂未填充</p>';
+                    }
+                } catch (err) {
+                    content.innerHTML = `<p>加载失败: ${err.message}</p>`;
+                }
             } else {
                 content.innerHTML = `
                     <h3>✏️ 费曼作业</h3>
                     <p>用自己的话解释本期核心概念：</p>
-                    <textarea style="width: 100%; height: 200px; background: var(--bg-dark); border: 1px solid var(--border); border-radius: 8px; padding: 16px; color: var(--text-primary); resize: vertical;" placeholder="在这里写下你的理解..."></textarea>
+                    <textarea id="homeworkText" style="width: 100%; height: 200px; background: var(--bg-dark); border: 1px solid var(--border); border-radius: 8px; padding: 16px; color: var(--text-primary); resize: vertical;" placeholder="在这里写下你的理解..."></textarea>
+                    <button class="btn btn-primary" onclick="saveHomework()" style="margin-top: 12px;">保存作业</button>
                 `;
             }
+        }
+
+        async function loadDeepContent(filename) {
+            const area = document.getElementById('deepContentArea');
+            area.innerHTML = '<p>加载中...</p>';
+            try {
+                const res = await fetch(`${API_BASE}/api/content/deep-learning/${currentEpisode}/${encodeURIComponent(filename)}`);
+                const data = await res.json();
+                if (data.success) {
+                    area.innerHTML = `<div class="markdown-content" style="background: var(--bg-dark); padding: 24px; border-radius: 8px;">${marked(data.content)}</div>`;
+                }
+            } catch (err) {
+                area.innerHTML = '<p>加载失败</p>';
+            }
+        }
+
+        // AI Chat State
+        let currentPromptData = null;
+        let chatMessages = [];
+        let episodeContext = '';
+
+        async function loadPromptContent(filename) {
+            try {
+                const res = await fetch(`${API_BASE}/api/content/ai-prompts/${currentEpisode}/${encodeURIComponent(filename)}`);
+                const data = await res.json();
+                const epRes = await fetch(`${API_BASE}/api/content/episode/${currentEpisode}`);
+                const epData = await epRes.json();
+                episodeContext = epData.success ? epData.content : '';
+                if (data.success) {
+                    currentPromptData = { title: filename, content: data.content };
+                    openAIModal(filename, data.content);
+                }
+            } catch (err) { alert('加载失败'); }
+        }
+
+        function openAIModal(title, promptContent) {
+            document.getElementById('aiModalTitle').textContent = '🤖 ' + title;
+            chatMessages = [];
+            const introMatch = promptContent.match(/## 使用说明[\s\S]*?(?=---)/);
+            const intro = introMatch ? introMatch[0].replace('## 使用说明', '').trim() : '与AI进行交互式学习';
+            document.getElementById('aiChatBody').innerHTML = '<div class="chat-intro"><h4>📋 练习说明</h4><p>' + intro + '</p></div><div id="chatMessages">' +
+                (!settings.apiKey ? '<div style="text-align:center;padding:40px;color:var(--text-secondary);"><p>请先在设置中配置API Key</p><button class="btn btn-primary" onclick="closeAIModal();openSettings();" style="margin-top:16px;">前往设置</button></div>' :
+                    '<div style="text-align:center;padding:20px;color:var(--text-secondary);"><p>✅ API已配置，请输入你的回答开始对话</p></div>') + '</div>';
+            document.getElementById('aiModal').classList.add('show');
+            document.getElementById('aiInput').focus();
+        }
+
+        function closeAIModal() { document.getElementById('aiModal').classList.remove('show'); }
+
+        async function sendAIMessage() {
+            const input = document.getElementById('aiInput');
+            const message = input.value.trim();
+            if (!message || !settings.apiKey) return;
+            chatMessages.push({ role: 'user', content: message });
+            input.value = '';
+            const chatArea = document.getElementById('chatMessages');
+            chatArea.innerHTML = chatMessages.map(m => '<div class="chat-message ' + (m.role === 'user' ? 'user' : 'ai') + '">' + (m.role === 'user' ? '👤' : '🤖') + ' ' + m.content + '</div>').join('') + '<div class="chat-message ai">🤖 思考中...</div>';
+            const quarter = currentEpisode <= 13 ? 'q1' : currentEpisode <= 26 ? 'q2' : currentEpisode <= 39 ? 'q3' : 'q4';
+            const ep = episodes[quarter].find(e => e.id === currentEpisode);
+            const systemPrompt = '你是投资学习助教。学生正在学习第' + currentEpisode + '期《' + ep.title + '》。练习类型：' + currentPromptData.title + '。课程内容：' + episodeContext.substring(0, 1500) + '。请根据学生回答进行互动教学，简洁有针对性。';
+            try {
+                const response = await callAI(systemPrompt, chatMessages);
+                chatMessages.push({ role: 'assistant', content: response });
+                chatArea.innerHTML = chatMessages.map(m => '<div class="chat-message ' + (m.role === 'user' ? 'user' : 'ai') + '">' + (m.role === 'user' ? '👤' : '🤖') + ' ' + m.content + '</div>').join('');
+                chatArea.scrollTop = chatArea.scrollHeight;
+            } catch (err) {
+                chatArea.innerHTML = chatMessages.slice(0, -1).map(m => '<div class="chat-message ' + (m.role === 'user' ? 'user' : 'ai') + '">' + (m.role === 'user' ? '👤' : '🤖') + ' ' + m.content + '</div>').join('') + '<div class="chat-message ai" style="color:#ef4444;">❌ API失败: ' + err.message + '</div>';
+                chatMessages.pop();
+            }
+        }
+
+        async function callAI(systemPrompt, messages) {
+            const provider = settings.provider || 'openai';
+            if (provider === 'openai') {
+                const res = await fetch('https://api.openai.com/v1/chat/completions', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + settings.apiKey }, body: JSON.stringify({ model: 'gpt-4o-mini', messages: [{ role: 'system', content: systemPrompt }].concat(messages) }) });
+                const data = await res.json();
+                if (data.error) throw new Error(data.error.message);
+                return data.choices[0].message.content;
+            } else if (provider === 'gemini') {
+                const res = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=' + settings.apiKey, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ contents: [{ parts: [{ text: systemPrompt + '\n\n' + messages.map(m => m.role + ': ' + m.content).join('\n') }] }] }) });
+                const data = await res.json();
+                if (data.error) throw new Error(data.error.message);
+                return data.candidates[0].content.parts[0].text;
+            }
+            throw new Error('暂不支持该AI提供商');
+        }
+
+        function toggleComplete() {
+            const btn = document.getElementById('completeBtn');
+            if (completedEpisodes.includes(currentEpisode)) {
+                completedEpisodes = completedEpisodes.filter(id => id !== currentEpisode);
+                btn.textContent = '✓ 标记完成';
+                btn.style.background = 'var(--success)';
+            } else {
+                completedEpisodes.push(currentEpisode);
+                btn.textContent = '✗ 取消完成';
+                btn.style.background = 'var(--bg-hover)';
+            }
+            saveUserProgress(); updateProgress(); renderEpisodeList();
+        }
+
+        function updateCompleteButton() {
+            const btn = document.getElementById('completeBtn');
+            if (completedEpisodes.includes(currentEpisode)) {
+                btn.textContent = '✗ 取消完成';
+                btn.style.background = 'var(--bg-hover)';
+            } else {
+                btn.textContent = '✓ 标记完成';
+                btn.style.background = 'var(--success)';
+            }
+        }
+
+        // Markdown parser with table and code block support
+        function marked(text) {
+            // Handle code blocks first
+            const codeBlocks = [];
+            text = text.replace(/```([^\n\r]*)([\r\n]+)([\s\S]*?)```/gm, (match, lang, newline, code) => {
+                const placeholder = `__CODE_BLOCK_${codeBlocks.length}__`;
+                codeBlocks.push({ lang: lang.trim(), code: code });
+                return placeholder;
+            });
+
+            // Handle inline code
+            text = text.replace(/`([^`]+)`/g, '<code style="background: var(--bg-hover); padding: 2px 6px; border-radius: 4px;">$1</code>');
+
+            // Handle tables
+            const lines = text.split('\n');
+            let inTable = false;
+            let tableHtml = '';
+            let result = [];
+
+            for (let i = 0; i < lines.length; i++) {
+                const line = lines[i].trim();
+                if (line.startsWith('|') && line.endsWith('|')) {
+                    if (!inTable) {
+                        inTable = true;
+                        tableHtml = '<table style="width: 100%; border-collapse: collapse; margin: 16px 0;">';
+                    }
+                    // Skip separator line
+                    if (line.match(/^\|[\s\-:|]+\|$/)) continue;
+
+                    const cells = line.split('|').filter(c => c.trim());
+                    const isHeader = !result.some(r => r.includes('<th'));
+                    const tag = tableHtml.includes('<tr>') ? 'td' : 'th';
+                    tableHtml += '<tr>';
+                    cells.forEach(cell => {
+                        tableHtml += `<${tag} style="border: 1px solid var(--border); padding: 8px 12px; text-align: left;">${cell.trim()}</${tag}>`;
+                    });
+                    tableHtml += '</tr>';
+                } else {
+                    if (inTable) {
+                        tableHtml += '</table>';
+                        result.push(tableHtml);
+                        tableHtml = '';
+                        inTable = false;
+                    }
+                    result.push(line);
+                }
+            }
+            if (inTable) {
+                tableHtml += '</table>';
+                result.push(tableHtml);
+            }
+
+            text = result.join('\n');
+
+            // Handle other markdown
+            text = text
+                .replace(/^### (.*$)/gim, '<h3 style="margin-top: 24px; margin-bottom: 12px;">$1</h3>')
+                .replace(/^## (.*$)/gim, '<h2 style="margin-top: 28px; margin-bottom: 14px;">$1</h2>')
+                .replace(/^# (.*$)/gim, '<h1 style="margin-top: 32px; margin-bottom: 16px;">$1</h1>')
+                .replace(/\*\*([^*]+)\*\*/gim, '<strong>$1</strong>')
+                .replace(/\*([^*]+)\*/gim, '<em>$1</em>')
+                .replace(/^> (.*$)/gim, '<blockquote style="border-left: 4px solid var(--primary); padding-left: 16px; color: var(--text-secondary); margin: 16px 0;">$1</blockquote>')
+                .replace(/^- (.*$)/gim, '<li style="margin-left: 20px;">$1</li>')
+                .replace(/^---$/gim, '<hr style="border: none; border-top: 1px solid var(--border); margin: 24px 0;">')
+                .replace(/\n\n/gim, '</p><p style="margin-bottom: 12px; line-height: 1.7;">')
+                .replace(/\n/gim, '<br>');
+
+            codeBlocks.forEach((block, index) => {
+                const placeholder = `__CODE_BLOCK_${index}__`;
+                const html = `<pre style="background: #0d1117; padding: 16px; border-radius: 8px; overflow-x: auto; white-space: pre; font-family: 'Menlo', 'Monaco', 'Consolas', 'Courier New', monospace; font-variant-ligatures: none; line-height: 1.4; margin: 16px 0;"><code>${escapeHtml(block.code)}</code></pre>`;
+                text = text.split(placeholder).join(html);
+            });
+            return text;
+        }
+
+        function escapeHtml(text) {
+            return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
         }
 
         function showDashboard() {

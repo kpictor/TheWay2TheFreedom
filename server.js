@@ -155,6 +155,55 @@ app.get('/api/notes/:username/:episodeId?', (req, res) => {
     }
 });
 
+// Get content files
+app.get('/api/content/:type/:episode/:file?', (req, res) => {
+    const { type, episode, file } = req.params;
+    let contentPath;
+
+    if (type === 'episode') {
+        // Main episode content
+        const episodesDir = path.join(__dirname, 'episodes');
+        const files = fs.readdirSync(episodesDir);
+        const episodeFile = files.find(f => f.startsWith(`EP${episode.padStart(2, '0')}`));
+        if (episodeFile) {
+            contentPath = path.join(episodesDir, episodeFile);
+        }
+    } else if (type === 'deep-learning') {
+        // Deep learning content
+        const deepDir = path.join(__dirname, 'deep-learning', `EP${episode.padStart(2, '0')}`);
+        if (file) {
+            contentPath = path.join(deepDir, `${file}.md`);
+        } else {
+            // List available files
+            if (fs.existsSync(deepDir)) {
+                const files = fs.readdirSync(deepDir).map(f => f.replace('.md', ''));
+                return res.json({ success: true, files });
+            }
+            return res.json({ success: true, files: [] });
+        }
+    } else if (type === 'ai-prompts') {
+        // AI prompts
+        const promptDir = path.join(__dirname, 'ai-prompts', `EP${episode.padStart(2, '0')}`);
+        if (file) {
+            contentPath = path.join(promptDir, `${file}.md`);
+        } else {
+            // List available files
+            if (fs.existsSync(promptDir)) {
+                const files = fs.readdirSync(promptDir).map(f => f.replace('.md', ''));
+                return res.json({ success: true, files });
+            }
+            return res.json({ success: true, files: [] });
+        }
+    }
+
+    if (contentPath && fs.existsSync(contentPath)) {
+        const content = fs.readFileSync(contentPath, 'utf8');
+        res.json({ success: true, content });
+    } else {
+        res.status(404).json({ error: '内容不存在' });
+    }
+});
+
 // Health check
 app.get('/api/health', (req, res) => {
     res.json({ status: 'ok', time: new Date().toISOString() });
